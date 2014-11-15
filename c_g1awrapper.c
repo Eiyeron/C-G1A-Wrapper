@@ -172,7 +172,6 @@ int main(int argc, char **argv) {
 	for(i = 0; i < 8; i++) {
 		fseek(bin_f, 0x100 + 2*i - 6, SEEK_SET); // WHy -6? I have to read at 0x100 and it actually reads 6 bytes after ><
 		fread(&sizeChecksumByte, sizeof(uint16_t), 1, bin_f);
-		printf("%x\n", sizeChecksumByte);
 		header.file_checksum += sizeChecksumByte;
 	}
 	header.file_checksum = ~header.file_checksum;
