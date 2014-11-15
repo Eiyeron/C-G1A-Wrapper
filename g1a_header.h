@@ -29,7 +29,7 @@ struct G1A_Header {
 	uint32_t inverted_filesize;
 	uint8_t checkbyte2;
 	uint16_t file_checksum;
-	uint8_t unknown[7];
+	uint8_t unknown[8];
 	uint8_t name_start;
 	uint8_t filename[8]; /* name used internally for settings etc? */
 	uint8_t unknown_2[2];

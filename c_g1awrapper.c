@@ -175,6 +175,10 @@ int main(int argc, char **argv) {
 		header.file_checksum += sizeChecksumByte;
 	}
 	header.file_checksum = ~header.file_checksum;
+	//endianess inversion.
+	header.file_checksum ^= header.file_checksum>>8;
+	header.file_checksum ^= (header.file_checksum&0xFF)<<8;
+	header.file_checksum ^= header.file_checksum>>8;
 
 	fseek(bin_f, 0, SEEK_SET);
 
@@ -195,9 +199,6 @@ int main(int argc, char **argv) {
 	uint8_t lowbyte = (uint8_t)((header.inverted_filesize & 0xFF000000)>>24);	// last (LSB) byte in the little-endian uint32
 	header.checkbyte1 = lowbyte - 0x41;
 	header.checkbyte2 = lowbyte - 0xB8;
-
-	//write the file checksum
-	header.file_checksum = 
 
 	header.name_start = '@';
 	if(!internalNameProvided) {
