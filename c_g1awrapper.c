@@ -51,6 +51,7 @@ int main(int argc, char **argv) {
 	int error;
 	int i;
 	int binSize;
+	uint16_t sizeChecksumByte;
 	time_t now_raw;
 	struct tm *now;
 
@@ -168,6 +169,14 @@ int main(int argc, char **argv) {
 	fseek(bin_f, 0, SEEK_END);
 	binSize = ftell(bin_f);
 	//printf("bin size : %d\n", binSize);
+	for(i = 0; i < 8; i++) {
+		fseek(bin_f, 0x100 + 2*i - 6, SEEK_SET); // WHy -6? I have to read at 0x100 and it actually reads 6 bytes after ><
+		fread(&sizeChecksumByte, sizeof(uint16_t), 1, bin_f);
+		printf("%x\n", sizeChecksumByte);
+		header.file_checksum += sizeChecksumByte;
+	}
+	header.file_checksum = ~header.file_checksum;
+
 	fseek(bin_f, 0, SEEK_SET);
 
 	printf("[I] File '%s' selected for G1A file.\n", g1aFileName);
@@ -187,7 +196,10 @@ int main(int argc, char **argv) {
 	uint8_t lowbyte = (uint8_t)((header.inverted_filesize & 0xFF000000)>>24);	// last (LSB) byte in the little-endian uint32
 	header.checkbyte1 = lowbyte - 0x41;
 	header.checkbyte2 = lowbyte - 0xB8;
-	
+
+	//write the file checksum
+	header.file_checksum = 
+
 	header.name_start = '@';
 	if(!internalNameProvided) {
 		if(!nameProvided) internalName = g1aFileName;
